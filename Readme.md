@@ -7,7 +7,7 @@
 Интерфейс командной строки Prisma предоставляет следующие основные команды:
 
 init — создает шаблон Prisma-проекта:
---datasource-provider — провайдер для работы с БД: sqlite, postgresql, mysql, sqlserver или mongodb (перезаписывает datasource из schema.prisma);
+--datasource-provider — провайдер для работы с БД: sqlite, postgresql, mysql, sqlserver или mongodb (перезаписывает datasource из schema.prisma);</br>
 --url — адрес БД (перезаписывает DATABASE_URL)
 ```
 npx prisma init --datasource-provider postgresql --url postgresql://user:password@localhost:3306/mydb
@@ -17,7 +17,7 @@ db pull — генерирует модели на основе существу
 npx prisma db pull
 ```
 migrate
-dev — выполняет миграцию для разработки:
+dev — выполняет миграцию для разработки:</br>
 --name — название миграции
 ```
 npx prisma migrate dev --name init
