@@ -9,19 +9,19 @@ datasource db {
 
 model user {
   id         Int         @id @default(autoincrement())
-  login      String?     @db.VarChar
-  password   String?     @db.VarChar
-  created_at DateTime?   @db.Date
-  updated_at DateTime?   @db.Date
+  login      String     @db.VarChar
+  password   String     @db.VarChar
+  created_at DateTime   @db.Date
+  updated_at DateTime   @db.Date
   work_time  work_time[]
 }
 
 model work_time {
   id         Int       @id @default(autoincrement())
-  id_user    Int?
-  begin_date DateTime? @db.Date
+  user_id    Int
+  begin_date DateTime @db.Date
   end_date   DateTime? @db.Date
-  created_at DateTime? @db.Date
-  updated_at DateTime? @db.Date
-  user       user?     @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")
+  created_at DateTime @db.Date
+  updated_at DateTime @db.Date
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")
 }
