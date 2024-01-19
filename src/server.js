@@ -16,9 +16,7 @@ app.use(logMiddleware);
 app.post('/track/start', async (req, res) => {
   const result = await prisma.work_time.create({
     data: {
-      begin_time: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      begin_time: new Date().toISOString()
     }
   });
 
@@ -34,7 +32,6 @@ app.post('/track/stop', async (req, res) => {
     },
     data: {
       end_time: new Date().toISOString(),
-      created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }
   });
@@ -42,33 +39,88 @@ app.post('/track/stop', async (req, res) => {
   res.json(result);
 });
 
-app.get('/auth/signup', (req, res) => {
-  const message = req.query.message;
-
-  res.json({ message });
-});
-
 app.post('/auth/signup', async (req, res) => {
   const { login, password } = req.body;
-  var salt = bcrypt.genSaltSync(10);
+  var salt = await bcrypt.genSalt(10);
 
   const result = await prisma.user.create({
     data: {
       login: login.toString(),
-      password: bcrypt.hashSync(password.toString(), salt),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      password: await bcrypt.hash(password.toString(), salt)
     }
   });
 
   return res.status(200).json({
-    token: jwt.sign(
+    jwt: jwt.sign(
       {
-        id: prisma.user.id
+        id: result.id
       },
-      'secret'
+      cfg.jwt.secret,
+      { expiresIn: cfg.jwt.end_time }
     )
   });
+});
+
+app.post('/auth/signin', async (req, res) => {
+  const { login, password } = req.body;
+
+  const result = await prisma.user.findFirst({
+    where: {
+      login: login
+    }
+  });
+
+  if (result && bcrypt.compareSync(password, result.password)) {
+    return res.status(200).json({
+      jwt: jwt.sign(
+        {
+          id: result.id
+        },
+        cfg.jwt.secret,
+        { expiresIn: cfg.jwt.end_time }
+      )
+    });
+  }
+
+  return res.status(200).json({ message: 'Неверный логин или пароль' });
+});
+
+app.post('/auth/connect', async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    var decoded = jwt.verify(token, cfg.jwt.secret, {
+      ignoreExpiration: false
+    });
+  } catch (err) {
+    err = {
+      name: 'JsonWebTokenError',
+      message: 'jwt is not valid'
+    };
+  }
+
+  if (decoded) {
+    const id = jwt.decode(token, { complete: true });
+    console.log(id);
+    const result = await prisma.user.findFirst({
+      where: {
+        id: id.payload.id
+      }
+    });
+    if (result) {
+      return res.status(200).json({
+        jwt: jwt.sign(
+          {
+            id: result.id
+          },
+          cfg.jwt.secret,
+          { expiresIn: cfg.jwt.end_time }
+        )
+      });
+    }
+  }
+
+  return;
 });
 
 app.listen(cfg.server.port, () => {

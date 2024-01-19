@@ -11,8 +11,8 @@ model user {
   id         Int         @id @default(autoincrement())
   login      String     @db.VarChar
   password   String     @db.VarChar
-  created_at DateTime   @db.Date
-  updated_at DateTime   @db.Date
+  created_at DateTime   @db.Date @default(now())
+  updated_at DateTime   @db.Date @default(now())
   work_time  work_time[]
 }
 
@@ -21,7 +21,7 @@ model work_time {
   user_id    Int
   begin_date DateTime @db.Date
   end_date   DateTime? @db.Date
-  created_at DateTime @db.Date
-  updated_at DateTime @db.Date
+  created_at DateTime @db.Date @default(now())
+  updated_at DateTime @db.Date @default(now())
   user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")
 }
