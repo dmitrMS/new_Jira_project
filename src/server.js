@@ -101,12 +101,13 @@ app.post('/auth/connect', async (req, res) => {
 
   if (decoded) {
     const id = jwt.decode(token, { complete: true });
-    console.log(id);
+
     const result = await prisma.user.findFirst({
       where: {
         id: id.payload.id
       }
     });
+
     if (result) {
       return res.status(200).json({
         jwt: jwt.sign(
