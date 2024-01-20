@@ -17,7 +17,7 @@ app.post('/track/start', async (req, res) => {
   const token = req.headers['token'];
 
   try {
-    var decoded = jwt.verify(token, cfg.jwt.secret, {
+    const decoded = jwt.verify(token, cfg.jwt.secret, {
       ignoreExpiration: false
     });
 
@@ -68,7 +68,7 @@ app.post('/track/stop', async (req, res) => {
   const token = req.headers['token'];
 
   try {
-    var decoded = jwt.verify(token, cfg.jwt.secret, {
+    const decoded = jwt.verify(token, cfg.jwt.secret, {
       ignoreExpiration: false
     });
 
@@ -122,7 +122,7 @@ app.post('/track/status', async (req, res) => {
   const token = req.headers['token'];
 
   try {
-    var decoded = jwt.verify(token, cfg.jwt.secret, {
+    const decoded = jwt.verify(token, cfg.jwt.secret, {
       ignoreExpiration: false
     });
 
@@ -166,7 +166,7 @@ app.post('/track/list', async (req, res) => {
   const token = req.headers['token'];
 
   try {
-    var decoded = jwt.verify(token, cfg.jwt.secret, {
+    const decoded = jwt.verify(token, cfg.jwt.secret, {
       ignoreExpiration: false
     });
 
@@ -251,7 +251,7 @@ app.post('/auth/connect', async (req, res) => {
   const token = req.headers['token'];
 
   try {
-    var decoded = jwt.verify(token, cfg.jwt.secret, {
+    const decoded = jwt.verify(token, cfg.jwt.secret, {
       ignoreExpiration: false
     });
 
