@@ -7,30 +7,30 @@ export class Database {
   constructor() {}
 
   async getUnfinishedWorkTime(id) {
-    const verify_work = await prisma.work_time.findFirst({
+    const verifyWork = await prisma.work_time.findFirst({
       where: {
         user_id: id,
         end_date: null
       }
     });
 
-    return verify_work !== null ? verify_work : null;
+    return verifyWork !== null ? verifyWork : null;
   }
 
   async getUsersWorkTimes(id) {
-    const verify_work = await prisma.work_time.findMany({
+    const verifyWork = await prisma.work_time.findMany({
       where: {
         user_id: id
       }
     });
 
-    return verify_work !== null ? verify_work : null;
+    return verifyWork !== null ? verifyWork : null;
   }
 
   async beginWorkTime(id) {
-    const verify_work = await new Database().getUnfinishedWorkTime(id);
+    const verifyWork = await new Database().getUnfinishedWorkTime(id);
 
-    if (verify_work === null) {
+    if (verifyWork === null) {
       const result = await prisma.work_time.create({
         data: {
           begin_date: new Date().toISOString(),
@@ -45,12 +45,12 @@ export class Database {
   }
 
   async finishWorkTime(id) {
-    const verify_work = await new Database().getUnfinishedWorkTime(id);
+    const verifyWork = await new Database().getUnfinishedWorkTime(id);
 
-    if (verify_work !== null) {
+    if (verifyWork !== null) {
       const result = await prisma.work_time.update({
         where: {
-          id: verify_work.id
+          id: verifyWork.id
         },
         data: {
           end_date: new Date().toISOString(),
@@ -63,6 +63,16 @@ export class Database {
 
     return null;
   }
+
+  async deleteWorkTime(id_work) {
+    await prisma.work_time.delete({
+      where: {
+        id: id_work
+      }
+    });
+
+    return null;
+}
 
   async findUserByLogin(login) {
     const result = await prisma.user.findFirst({

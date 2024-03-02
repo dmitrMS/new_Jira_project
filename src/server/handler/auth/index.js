@@ -5,9 +5,9 @@ export class AuthHandler {
   }
 
   async singIn(login, password) {
-    const verify_user = await this.db.createUserToken(login, password);
+    const verifyUser = await this.db.createUserToken(login, password);
 
-    return verify_user !== null ? this.jwt.createToken(verify_user.id) : null;
+    return verifyUser !== null ? this.jwt.createToken(verifyUser.id) : null;
   }
 
   async singUp(login, password) {
@@ -17,8 +17,8 @@ export class AuthHandler {
   }
 
   async connect(token) {
-    const verify_user = await this.jwt.auntentification(token);
+    const verifyUser = await this.jwt.auntentification(token);
 
-    return verify_user !== null ? this.jwt.createToken(verify_user.id) : null;
+    return verifyUser !== null ? this.jwt.createToken(verifyUser.id) : null;
   }
 }

@@ -14,7 +14,7 @@ export class Jwt {
         id: id
       },
       cfg.jwt.secret,
-      { expiresIn: cfg.jwt.end_time }
+      { expiresIn: cfg.jwt.endTime }
     );
 
     return token;
@@ -29,9 +29,9 @@ export class Jwt {
       if (decoded) {
         const id = jwt.decode(token, { complete: true });
 
-        const verify_user = await this.db.findUserById(id.payload.id);
+        const verifyUser = await this.db.findUserById(id.payload.id);
 
-        return verify_user ? verify_user.id : null;
+        return verifyUser ? verifyUser.id : null;
       }
     } catch (err) {
       return null;

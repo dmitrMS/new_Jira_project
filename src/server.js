@@ -6,6 +6,7 @@ import { AuthHandler } from './server/handler/auth/index.js';
 import { TrackHandler } from './server/handler/track/index.js';
 import { cfg } from './config.js';
 import { logger, logMiddleware } from './logger.js';
+import cors from 'cors'
 
 const app = express();
 const db = new Database();
@@ -17,6 +18,7 @@ const authHeader = 'x-auth-key';
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(logMiddleware);
+app.use(cors());
 
 app.post('/track/start', async (req, res) => {
   const token = req.headers[authHeader];
@@ -36,20 +38,28 @@ app.post('/track/stop', async (req, res) => {
     : res.status(200).json({ message: 'Нет незаконченных работ!' });
 });
 
+app.post('/track/delete', async (req, res) => {
+  const token = req.headers[authHeader];
+  const { id_work } = req.body;
+  await trackHandler.delete(token, id_work);
+
+  return  res.status(200).json({ message: 'Работа удалена' });
+});
+
 app.post('/track/status', async (req, res) => {
   const token = req.headers[authHeader];
-  const verify_work = await trackHandler.status(token);
+  const verifyWork = await trackHandler.status(token);
 
-  return verify_work !== null
-    ? res.status(200).json(verify_work)
+  return verifyWork !== null
+    ? res.status(200).json(verifyWork)
     : res.status(200).json();
 });
 
 app.post('/track/list', async (req, res) => {
   const token = req.headers[authHeader];
-  const verify_work = await trackHandler.list(token);
+  const verifyWork = await trackHandler.list(token);
 
-  return res.status(200).json(verify_work);
+  return res.status(200).json(verifyWork);
 });
 
 app.post('/auth/signup', async (req, res) => {
@@ -63,22 +73,22 @@ app.post('/auth/signup', async (req, res) => {
 
 app.post('/auth/signin', async (req, res) => {
   const { login, password } = req.body;
-  const verify_user = await authHandler.singIn(login, password);
+  const verifyUser = await authHandler.singIn(login, password);
 
-  return verify_user !== null
+  return verifyUser !== null
     ? res.status(200).json({
-        jwt: verify_user
+        jwt: verifyUser 
       })
     : res.status(200).json({ message: 'Неверный логин или пароль' });
 });
 
 app.post('/auth/connect', async (req, res) => {
   const token = req.headers[authHeader];
-  const verify_user = await authHandler.connect(token);
+  const verifyUser = await authHandler.connect(token);
 
-  return verify_user !== null
+  return verifyUser !== null
     ? res.status(200).json({
-        jwt: verify_user
+        jwt: verifyUser 
       })
     : res.status(401).json();
 });

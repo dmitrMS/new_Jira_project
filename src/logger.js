@@ -13,7 +13,7 @@ let format = winston.format.printf((info) => {
   return log;
 });
 
-if (cfg.log.human_friendly === false) {
+if (cfg.log.humanFriendly === false) {
   format = winston.format.json();
 }
 
