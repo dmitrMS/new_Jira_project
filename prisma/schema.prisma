@@ -11,17 +11,39 @@ model user {
   id         Int         @id @default(autoincrement())
   login      String     @db.VarChar
   password   String     @db.VarChar
-  created_at DateTime   @db.Date @default(now())
-  updated_at DateTime   @db.Date @default(now())
+  role       String     @db.VarChar
+  team_id    Int? 
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  team       team?     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team")
   work_time  work_time[]
 }
 
 model work_time {
   id         Int       @id @default(autoincrement())
-  user_id    Int
-  begin_date DateTime @db.Date
-  end_date   DateTime? @db.Date
-  created_at DateTime @db.Date @default(now())
-  updated_at DateTime @db.Date @default(now())
+  user_id    Int  
+  task_id    Int?   
+  task_name  String?     @db.VarChar
+  begin_date DateTime   
+  end_date   DateTime? 
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
   user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")
+  task       task?     @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "task")
+}
+
+model task {
+  id         Int       @id @default(autoincrement())
+  name       String     @db.VarChar
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  work_time  work_time[]
+}
+
+model team {
+  id         Int       @id @default(autoincrement())
+  admin_id   Int 
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  user  user[]
 }

@@ -8,10 +8,11 @@ export class Jwt {
     this.db = db;
   }
 
-  createToken(id) {
+  createToken(id,role) { // вшить админа и юзера
     const token = jwt.sign(
       {
-        id: id
+        id: id,
+        role:role
       },
       cfg.jwt.secret,
       { expiresIn: cfg.jwt.endTime }
@@ -30,6 +31,8 @@ export class Jwt {
         const id = jwt.decode(token, { complete: true });
 
         const verifyUser = await this.db.findUserById(id.payload.id);
+        const verifyRoleUser = await this.db.findUserById(id.payload.role);
+        const verify = {id:verifyUser.id, role:verifyRoleUser.role};
 
         return verifyUser ? verifyUser.id : null;
       }
