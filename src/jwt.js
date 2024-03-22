@@ -31,12 +31,13 @@ export class Jwt {
         const id = jwt.decode(token, { complete: true });
 
         const verifyUser = await this.db.findUserById(id.payload.id);
-        const verifyRoleUser = await this.db.findUserById(id.payload.role);
-        const verify = {id:verifyUser.id, role:verifyRoleUser.role};
+        const verifyRoleUser = id.payload.role;
+        const verify = {id:verifyUser.id, role:verifyRoleUser};
 
-        return verifyUser ? verifyUser.id : null;
+        return verifyUser ? verify : null;
       }
     } catch (err) {
+      
       return null;
     }
   }

@@ -25,7 +25,6 @@ app.use(cors());
 app.post('/track/start', async (req, res) => {
   const token = req.headers[authHeader];
   const { task_name } = req.body;
-  console.log(req.body);
   const result = await trackHandler.start(token,task_name );
 
   return result !== null
@@ -45,7 +44,6 @@ app.post('/track/stop', async (req, res) => {
 app.post('/track/update', async (req, res) => {
   const token = req.headers[authHeader];
   const { id_work,task_name,begin_date, end_date} = req.body;
-  console.log(req.body);
   const result = await trackHandler.update(token,id_work,task_name,begin_date, end_date);
 
   return result !== null
@@ -112,6 +110,18 @@ app.post('/auth/connect', async (req, res) => {
     ? res.status(200).json({
         jwt: verifyUser 
       })
+    : res.status(401).json();
+});
+
+app.post('/auth/data', async (req, res) => {
+  const token = req.headers[authHeader];
+  const verifyUser = await authHandler.getDate(token);
+
+  return verifyUser !== null
+    ? res.status(200).json({
+      id: verifyUser.id, 
+      role: verifyUser.role
+    })
     : res.status(401).json();
 });
 

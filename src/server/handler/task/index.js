@@ -7,7 +7,7 @@ export class TaskHandler {
     async create(token,task_id) {
       const verifyUser = await this.jwt.auntentification(token);
   
-      return verifyUser !== null
+      return verifyUser.id !== null
         ? await this.db.createTask(task_id)
         : null;
     }
@@ -15,7 +15,7 @@ export class TaskHandler {
     async delete(token, id_task) {
       const verifyUser = await this.jwt.auntentification(token);
   
-      return verifyUser !== null
+      return verifyUser.id !== null
         ? await this.db.deleteTask(id_task)
         : null;
     }
@@ -23,7 +23,7 @@ export class TaskHandler {
     async status(token) {
       const verifyUser = await this.jwt.auntentification(token);
   
-      return verifyUser !== null
+      return verifyUser.id !== null
         ? await this.db.getUnfinishedTasks()
         : null;
     }
@@ -31,7 +31,7 @@ export class TaskHandler {
     async list(token) {
       const verifyUser = await this.jwt.auntentification(token);
   
-      return verifyUser !== null
+      return verifyUser.id !== null
         ? await this.db.getTasks()
         : null;
     }

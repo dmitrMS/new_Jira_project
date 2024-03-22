@@ -30,7 +30,6 @@ export class Database {
   async beginWorkTime(id, task_name) {
     const verifyWork = await new Database().getUnfinishedWorkTime(id);
 
-    console.log(id,task_name);
     if (verifyWork === null) {
       const result = await prisma.work_time.create({
         data: {
@@ -67,7 +66,6 @@ export class Database {
   }
 
   async updateWorkTime(id,id_work, task_name, begin_time, end_time) {
-    console.log(id_work,task_name,begin_time, end_time);
     const result = await prisma.work_time.update({
       where: {
         id: id_work
@@ -122,22 +120,11 @@ export class Database {
 
   async createUser(login, password) {
     let salt = await bcrypt.genSalt(10);
-
     const result = await prisma.user.create({
       data: {
         login: login.toString(),
         password: await bcrypt.hash(password.toString(), salt),
         role: 'user'
-      }
-    });
-
-    return result;
-  }
-
-  async createUser(name) {
-    const result = await prisma.task.create({
-      data: {
-        name: name
       }
     });
 
