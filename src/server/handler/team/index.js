@@ -1,30 +1,32 @@
-export class TaskHandler {
+export class TeamHandler {
     constructor(db, jwt) {
       this.db = db;
       this.jwt = jwt;
     }
   
-    async create(token,name,team_id) {
+    async create(token,name) {
       const verifyUser = await this.jwt.auntentificationAdmin(token);
+      const team=await this.db.createTeam(verifyUser.id,name)
   
-      return verifyUser.id !== null
-        ? await this.db.createTask(name,team_id)
+      return team.id !== null
+        ? await this.db.createUserTeam(verifyUser.id,team.id)
         : null;
     }
   
-    async delete(token, id_task) {
+    async delete(token, team_id) {
       const verifyUser = await this.jwt.auntentificationAdmin(token);
   
       return verifyUser.id !== null
-        ? await this.db.deleteTask(id_task)
+        ? await this.db.deleteTeam(team_id)
         : null;
     }
   
-    async status(token) {
+    async addUserTeam(token,login,team_id) {
       const verifyUser = await this.jwt.auntentificationAdmin(token);
+      const invitedUser=await this.db.findUserByLogin(login);
   
-      return verifyUser.id !== null
-        ? await this.db.getUnfinishedTasks()
+      return invitedUser !== null
+        ? await this.db.createNotification(verifyUser.id,invitedUser.id,team_id)
         : null;
     }
   
@@ -32,7 +34,7 @@ export class TaskHandler {
       const verifyUser = await this.jwt.auntentificationAdmin(token);
   
       return verifyUser.id !== null
-        ? await this.db.getTasks()
+        ? await this.db.getTeams()
         : null;
     }
   }

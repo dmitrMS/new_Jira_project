@@ -8,11 +8,12 @@ export class Jwt {
     this.db = db;
   }
 
-  createToken(id,role) { // вшить админа и юзера
+  createToken(id, role) {
+    // вшить админа и юзера
     const token = jwt.sign(
       {
         id: id,
-        role:role
+        role: role
       },
       cfg.jwt.secret,
       { expiresIn: cfg.jwt.endTime }
@@ -32,12 +33,31 @@ export class Jwt {
 
         const verifyUser = await this.db.findUserById(id.payload.id);
         const verifyRoleUser = id.payload.role;
-        const verify = {id:verifyUser.id, role:verifyRoleUser};
+        const verify = { id: verifyUser.id, role: verifyRoleUser };
 
         return verifyUser ? verify : null;
       }
     } catch (err) {
-      
+      return null;
+    }
+  }
+
+  async auntentificationAdmin(token) {
+    try {
+      const decoded = jwt.verify(token, cfg.jwt.secret, {
+        ignoreExpiration: false
+      });
+
+      if (decoded) {
+        const id = jwt.decode(token, { complete: true });
+
+        const verifyUser = await this.db.findUserById(id.payload.id);
+        const verifyRoleUser = id.payload.role;
+        const verify = { id: verifyUser.id, role: verifyRoleUser };
+
+        return verifyUser && verifyRoleUser === 'teamlead' ? verify : null;
+      }
+    } catch (err) {
       return null;
     }
   }

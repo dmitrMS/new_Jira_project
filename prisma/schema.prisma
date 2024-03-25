@@ -12,11 +12,21 @@ model user {
   login      String     @db.VarChar
   password   String     @db.VarChar
   role       String     @db.VarChar
-  team_id    Int? 
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
-  team       team?     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team")
+  user_team  user_team[]
   work_time  work_time[]
+  notification  notification[]
+}
+
+model user_team {
+  id         Int         @id @default(autoincrement())
+  user_id    Int  
+  team_id    Int 
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")
+  team       team     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team")
 }
 
 model work_time {
@@ -35,15 +45,31 @@ model work_time {
 model task {
   id         Int       @id @default(autoincrement())
   name       String     @db.VarChar
+  team_id    Int 
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
+  team       team     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team")
   work_time  work_time[]
 }
 
 model team {
   id         Int       @id @default(autoincrement())
+  name       String     @db.VarChar
   admin_id   Int 
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
-  user  user[]
+  user_team  user_team[]
+  task  task[]
+}
+
+model notification {
+  id         Int       @id @default(autoincrement())
+  sender_id   Int
+  user_id   Int 
+  status    Boolean?    @default(false)
+  reason    String     @db.VarChar
+  data_id    Int
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")
 }
