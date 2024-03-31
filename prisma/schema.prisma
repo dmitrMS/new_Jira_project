@@ -69,6 +69,7 @@ model notification {
   status    Boolean?    @default(false)
   reason    String     @db.VarChar
   data_id    Int
+  text    String?     @db.VarChar
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
   user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user")

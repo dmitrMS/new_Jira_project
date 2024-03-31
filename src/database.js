@@ -175,7 +175,7 @@ export class Database {
     return verifyWork !== null ? verifyWork : null;
   }
 
-  async createTeam(id,name) {
+  async createTeam(id, name) {
     const result = await prisma.team.create({
       data: {
         admin_id: id,
@@ -196,10 +196,10 @@ export class Database {
     return null;
   }
 
-  async getTeam(id) {
+  async getTeams(id) {
     const verifyWork = await prisma.team.findFirst({
       where: {
-        user_id: id
+        id: id
       }
     });
 
@@ -212,15 +212,17 @@ export class Database {
         user_id: id
       }
     });
-    const userTeams=[];
+    let userTeams = [];
 
-    teamUsers.forEach(async (element) => {
-      userTeams.push(await new Database().getTeam(element.id));
-  });
+    for (const element of teamUsers) {
+      const item=await new Database().getTeams(element.team_id);
+      userTeams.push(item);
+    }
+  
     return userTeams;
   }
-  
-  async createNotification(id,user_id,team_id) {
+
+  async createNotification(id, user_id, team_id) {
     const result = await prisma.notification.create({
       data: {
         sender_id: id,
@@ -249,7 +251,7 @@ export class Database {
         id: id
       },
       data: {
-        status:true
+        status: true
       }
     });
 
@@ -260,7 +262,7 @@ export class Database {
     const verifyWork = await prisma.notification.findMany({
       where: {
         user_id: id,
-        status:false
+        status: false
       }
     });
 
@@ -277,7 +279,7 @@ export class Database {
     return verifyWork !== null ? verifyWork : null;
   }
 
-  async createUserTeam(user_id,team_id) {
+  async createUserTeam(user_id, team_id) {
     const result = await prisma.user_team.create({
       data: {
         user_id: user_id,
@@ -300,13 +302,13 @@ export class Database {
   }
 
   async getUsersTeam(team_id) {
-    const verifyWork = await prisma.task.findMany({
+    const verifyWork = await prisma.user_team.findMany({
       where: {
         team_id: team_id
       }
     });
 
-    return verifyWork !== null ? verifyWork : null;
+    return verifyWork;
   }
 }
 

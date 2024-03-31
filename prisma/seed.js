@@ -7,6 +7,8 @@ async function main() {
     create: {
       login: 'mark160403',
       password: 'mark66',
+      created_at: '2024-02-27T00:00:00.000Z',
+      updated_at: '2024-02-28T00:00:00.000Z',
       work_time: {
         create: {
           begin_date: '2024-02-27T00:00:00.000Z',
@@ -23,6 +25,8 @@ async function main() {
     create: {
       login: 'dmitry',
       password: 'P@ssw0rd',
+      created_at: '2024-02-27T00:00:00.000Z',
+      updated_at: '2024-02-28T00:00:00.000Z',
       work_time: {
         create: [
           {

@@ -31,10 +31,10 @@ export class TeamHandler {
     }
   
     async list(token) {
-      const verifyUser = await this.jwt.auntentificationAdmin(token);
+      const verifyUser = await this.jwt.auntentification(token);
   
       return verifyUser.id !== null
-        ? await this.db.getTeams()
+        ? await this.db.getUsersTeams(verifyUser.id)
         : null;
     }
   }

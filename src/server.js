@@ -22,11 +22,15 @@ const teamHandler = new TeamHandler(db, jwt);
 const notificationHandler = new NotificationHandler(db, jwt);
 const userTeamHandler = new UserTeamHandler(db, jwt);
 const authHeader = 'x-auth-key';
+const corsOptions = {
+  origin: "http://localhost:8081",
+  optionSuccessStatus: 200, 
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(logMiddleware);
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.post('/track/start', async (req, res) => {
   const token = req.headers[authHeader];
@@ -116,7 +120,8 @@ app.post('/team/create', async (req, res) => {
 app.post('/team/delete', async (req, res) => {
   const token = req.headers[authHeader];
   const { team_id } = req.body;
-  const verifyWork = await teamHandler.create(token,team_id);
+  console.log(req.body);
+  const verifyWork = await teamHandler.delete(token,team_id);
 
   return verifyWork !== null
     ? res.status(200).json(verifyWork)
@@ -144,8 +149,9 @@ app.post('/team/add_user', async (req, res) => {
 
 app.post('/user_team/delete', async (req, res) => {
   const token = req.headers[authHeader];
-  const { used_id,team_id } = req.body;
-  const verifyWork = await userTeamHandler.create(token,used_id,team_id);
+  const { user_id,team_id } = req.body;
+  console.log(req.body);
+  const verifyWork = await userTeamHandler.delete(token,user_id,team_id);
 
   return verifyWork !== null
     ? res.status(200).json(verifyWork)
@@ -157,6 +163,7 @@ app.post('/user_team/list', async (req, res) => {
   const { team_id } = req.body;
   const verifyWork = await userTeamHandler.list(token,team_id);
 
+  console.log(verifyWork);
   return verifyWork !== null
     ? res.status(200).json(verifyWork)
     : res.status(200).json(null);
