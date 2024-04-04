@@ -28,11 +28,12 @@ export class TaskHandler {
         : null;
     }
   
-    async list(token) {
-      const verifyUser = await this.jwt.auntentificationAdmin(token);
+    async list(token,team_id) {
+      const verifyUser = await this.jwt.auntentification(token);
+      const usersTeam= await this.db.getTeamById(team_id);
   
       return verifyUser.id !== null
-        ? await this.db.getTasks()
+        ? await this.db.getTeamTasks(usersTeam)
         : null;
     }
   }

@@ -20,24 +20,76 @@ export class Database {
   async getUsersWorkTimes(id) {
     const verifyWork = await prisma.work_time.findMany({
       where: {
-        user_id: id
+        user_id: id,
+        task_id: null
       }
     });
 
     return verifyWork !== null ? verifyWork : null;
   }
 
-  async beginWorkTime(id, task_name) {
+  async getUsersTeamWorkTimes(id,team_id) {
+    const usersTasks=await this.getTeamTasksById(team_id);
+    let teamWorkTimes=[];
+    for (const element of usersTasks) 
+    {
+      const verifyWork = await prisma.work_time.findMany({
+        where: {
+          user_id: id,
+          task_id:element.id
+        }
+      });
+      for (const item of verifyWork) 
+      {
+        teamWorkTimes.push(item);
+      }
+    }
+
+    return teamWorkTimes;
+  }
+
+  async getManuUsersTeamWorkTimes(team_id) {
+    const usersTasks=await this.getTeamTasksById(team_id);
+    let teamWorkTimes=[];
+    for (const element of usersTasks) 
+    {
+      const verifyWork = await prisma.work_time.findMany({
+        where: {
+          task_id:element.id
+        }
+      });
+      for (const item of verifyWork) 
+      {
+        teamWorkTimes.push(item);
+      }
+    }
+
+    return teamWorkTimes;
+  }
+
+  async beginWorkTime(id, task_name,task_id) {
     const verifyWork = await new Database().getUnfinishedWorkTime(id);
 
     if (verifyWork === null) {
-      const result = await prisma.work_time.create({
-        data: {
-          user_id: id,
-          begin_date: new Date().toISOString(),
-          task_name: task_name
-        }
-      });
+      let result={};
+      if (task_id == null) {
+        result = await prisma.work_time.create({
+          data: {
+            user_id: id,
+            begin_date: new Date().toISOString(),
+            task_name: task_name
+          }
+        });
+      } else {
+        result = await prisma.work_time.create({
+          data: {
+            user_id: id,
+            begin_date: new Date().toISOString(),
+            task_name: task_name,
+            task_id: task_id
+          }
+        });
+      }
 
       return result;
     }
@@ -206,6 +258,16 @@ export class Database {
     return verifyWork !== null ? verifyWork : null;
   }
 
+  async getTeamById(id) {
+    const verifyWork = await prisma.team.findFirst({
+      where: {
+        id: id
+      }
+    });
+
+    return verifyWork !== null ? verifyWork : null;
+  }
+
   async getUsersTeams(id) {
     const teamUsers = await prisma.user_team.findMany({
       where: {
@@ -215,11 +277,44 @@ export class Database {
     let userTeams = [];
 
     for (const element of teamUsers) {
-      const item=await new Database().getTeams(element.team_id);
+      const item = await new Database().getTeams(element.team_id);
       userTeams.push(item);
     }
-  
+
     return userTeams;
+  }
+
+  async getTeamsTasks(usersTeams) {
+    let teamsTasks = [];
+    for (const element of usersTeams) {
+      teamsTasks = await prisma.task.findMany({
+        where: {
+          team_id: element.id
+        }
+      });
+    }
+
+    return teamsTasks;
+  }
+
+  async getTeamTasks(userTeam) {
+    const teamTasks = await prisma.task.findMany({
+      where: {
+        team_id: userTeam.id
+      }
+    });
+
+    return teamTasks;
+  }
+
+  async getTeamTasksById(team_id) {
+    const teamTasks = await prisma.task.findMany({
+      where: {
+        team_id: team_id
+      }
+    });
+
+    return teamTasks;
   }
 
   async createNotification(id, user_id, team_id) {

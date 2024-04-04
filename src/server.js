@@ -34,8 +34,8 @@ app.use(cors(corsOptions));
 
 app.post('/track/start', async (req, res) => {
   const token = req.headers[authHeader];
-  const { task_name } = req.body;
-  const result = await trackHandler.start(token, task_name);
+  const { task_name,task_id } = req.body;
+  const result = await trackHandler.start(token, task_name,task_id);
 
   return result !== null
     ? res.status(200).json(result)
@@ -86,23 +86,44 @@ app.post('/track/status', async (req, res) => {
 
 app.post('/track/list', async (req, res) => {
   const token = req.headers[authHeader];
-  const verifyWork = await trackHandler.list(token);
+  const { team_id } = req.body;
+  const verifyWork = await trackHandler.list(token,team_id);
+
+  return res.status(200).json(verifyWork);
+});
+
+app.post('/team/track/list', async (req, res) => {
+  const token = req.headers[authHeader];
+  const { team_id } = req.body;
+  const verifyWork = await trackHandler.listTeam(token,team_id);
 
   return res.status(200).json(verifyWork);
 });
 
 app.post('/task/create', async (req, res) => {
   const token = req.headers[authHeader];
-  const verifyWork = await taskHandler.create(token);
+  const { name,team_id } = req.body;
+  const verifyWork = await taskHandler.create(token,name,team_id);
 
   return verifyWork !== null
     ? res.status(200).json(verifyWork)
     : res.status(200).json(null);
 });
 
-app.get('/task/list', async (req, res) => {
+app.post('/task/delete', async (req, res) => {
   const token = req.headers[authHeader];
-  const verifyWork = await taskHandler.list(token);
+  const { task_id } = req.body;
+  const verifyWork = await taskHandler.delete(token,task_id);
+
+  return verifyWork !== null
+    ? res.status(200).json(verifyWork)
+    : res.status(200).json(null);
+});
+
+app.post('/task/list', async (req, res) => {
+  const token = req.headers[authHeader];
+  const { team_id } = req.body;
+  const verifyWork = await taskHandler.list(token,team_id);
 
   return res.status(200).json(verifyWork);
 });
@@ -120,7 +141,6 @@ app.post('/team/create', async (req, res) => {
 app.post('/team/delete', async (req, res) => {
   const token = req.headers[authHeader];
   const { team_id } = req.body;
-  console.log(req.body);
   const verifyWork = await teamHandler.delete(token,team_id);
 
   return verifyWork !== null
@@ -150,7 +170,6 @@ app.post('/team/add_user', async (req, res) => {
 app.post('/user_team/delete', async (req, res) => {
   const token = req.headers[authHeader];
   const { user_id,team_id } = req.body;
-  console.log(req.body);
   const verifyWork = await userTeamHandler.delete(token,user_id,team_id);
 
   return verifyWork !== null
@@ -163,7 +182,6 @@ app.post('/user_team/list', async (req, res) => {
   const { team_id } = req.body;
   const verifyWork = await userTeamHandler.list(token,team_id);
 
-  console.log(verifyWork);
   return verifyWork !== null
     ? res.status(200).json(verifyWork)
     : res.status(200).json(null);

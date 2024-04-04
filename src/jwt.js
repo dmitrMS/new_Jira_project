@@ -35,7 +35,7 @@ export class Jwt {
         const verifyRoleUser = id.payload.role;
         const verify = { id: verifyUser.id, role: verifyRoleUser };
 
-        return verifyUser ? verify : null;
+        return verifyUser!==undefined ? verify : null;
       }
     } catch (err) {
       return null;
